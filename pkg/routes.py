@@ -64,8 +64,34 @@ def seed():
 
 @app.route('/admin')
 def admin():
-    all_doctors = Doctor.query.all()
-    return render_template('care_dash_admin.html', doctors = all_doctors )
+    specialty_id = request.args.get('specialty_id', type=int)
+    search = request.args.get('search', '').strip()
+
+    query = Doctor.query
+
+    if specialty_id:
+        query = query.filter(Doctor.specialty_id == specialty_id)
+
+    if search:
+        query = query.filter(
+            db.or_(
+                Doctor.first_name.ilike(f'%{search}%'),
+                Doctor.last_name.ilike(f'%{search}%')
+            )
+        )
+
+    # Order alphabetically by last name
+    all_doctors = query.order_by(Doctor.last_name.asc()).all()
+
+    specialties = Specialty.query.order_by(Specialty.name.asc()).all()
+
+    return render_template(
+        'care_dash_admin.html',
+        doctors=all_doctors,
+        specialties=specialties,
+        selected_specialty=specialty_id,
+        search=search
+    )
 
 
 

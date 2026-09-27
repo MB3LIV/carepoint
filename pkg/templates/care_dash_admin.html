@@ -14,7 +14,7 @@
             <nav class="p-4 space-y-2">
   <a href="#" class="block px-4 py-2 rounded-md bg-blue-50 text-blue-600 font-medium">Dashboard</a>
   <a href="/admin/doctors/add" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Manage Doctors</a>
-  <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Edit Doctors</a>
+  <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Book Appointment</a>
   <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">All Appointments</a>
   <a href="#" class="block px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100">Logout</a>
 </nav>
@@ -31,12 +31,41 @@
     <p class="text-sm text-gray-500">Total Patients</p>
     <p class="text-3xl font-bold mt-2">312</p>
   </div>
+  
 
   <div class="bg-white rounded-lg shadow-sm p-6">
     <p class="text-sm text-gray-500">Total Doctors</p>
     <p class="text-3xl font-bold mt-2">{{ doctors|length }}</p>
   </div>
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-4">
+  <form method="GET" action="{{ url_for('admin') }}" class="flex flex-wrap gap-4 items-end">
 
+    <div>
+      <label class="block text-sm mb-1">Specialty</label>
+      <select name="specialty_id" onchange="this.form.submit()" class="border rounded-md p-2">
+        <option value="">All Specialties</option>
+        {% for specialty in specialties %}
+        <option value="{{ specialty.id }}" {{ 'selected' if selected_specialty == specialty.id else '' }}>
+          {{ specialty.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-sm mb-1">Search by name</label>
+      <input type="text" name="search" value="{{ search }}" placeholder="e.g. Adeyemi"
+             class="border rounded-md p-2">
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Filter</button>
+
+    {% if selected_specialty or search %}
+      <a href="{{ url_for('admin') }}" class="text-sm text-gray-500 underline">Clear filters</a>
+    {% endif %}
+
+  </form>
+</div>
   <div class="bg-white rounded-lg shadow-sm p-6">
     <p class="text-sm text-gray-500">Appointments Today</p>
     <p class="text-3xl font-bold mt-2">27</p>
